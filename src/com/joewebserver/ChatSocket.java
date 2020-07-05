@@ -44,13 +44,73 @@ public class ChatSocket {
         this.writeMsg(msgArr);
     }
 
-    private void writeMsg(byte[] arr) throws IOException {
+    public void writeMsg(byte[] arr) throws IOException {
         out.write(arr);
     }
 
     public void bell() throws IOException {
         byte[] arr = {7};
         this.writeMsg(arr);
+    }
+
+    public void clearLine() throws IOException {
+        byte[] csi = {0x1B, 0x5B, 0x32, 0x4B};
+        this.writeMsg(csi);
+    }
+
+    public void clearLineAbove() throws IOException {
+        byte[] csi = {
+                // Go up one line and to the beginning
+                0x1B,
+                0x5B,
+                0x46,
+                // Clear line
+                0x1B,
+                0x5B,
+                0x32,
+                0x4B,
+        };
+        this.writeMsg(csi);
+    }
+
+    public void bold() throws IOException {
+        byte[] csi = {
+                0x1B,
+                0x5B,
+                0x31,
+                0x6D,
+        };
+        this.writeMsg(csi);
+    }
+
+    public void resetSGR() throws IOException {
+        // Use Select Graphic Rendition reset
+        byte[] csi = {
+                0x1B,
+                0x5B,
+                0x30,
+                0x6D,
+        };
+        this.writeMsg(csi);
+    }
+
+    public void setFGColor(int code) throws IOException {
+        String codeStr = Integer.toString(code);
+        byte[] codeArr = codeStr.getBytes();
+
+        byte[] csi = {
+                0x1B,
+                0x5B,
+                codeArr[0],
+                codeArr[1],
+                0x6D,
+        };
+        this.writeMsg(csi);
+    }
+
+    public void clearScreen() throws IOException {
+        byte[] csi = {0x1B, 0x63};
+        this.writeMsg(csi);
     }
 
     public String readMsg() throws IOException {

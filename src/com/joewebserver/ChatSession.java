@@ -41,6 +41,7 @@ public class ChatSession implements Runnable {
             while(true) {
                 String msg = chat.readMsg();
                 if (!msg.isBlank()) {
+                    chat.clearLineAbove();
                     msg = String.format("%s: %s", username, msg);
                     this.sendAll(msg);
                 }
@@ -60,8 +61,16 @@ public class ChatSession implements Runnable {
     private void sendAll(String msg) {
         for (ChatSocket s : users) {
             try {
-                s.writeMsgLn(msg);
-                s.bell();
+                if (s.id == this.id) {
+                    s.writeMsgLn(msg);
+                } else {
+                    s.setFGColor(32);
+                    s.writeMsgLn(msg);
+                    s.resetSGR();
+                    s.bell();
+                }
+
+
             } catch (IOException ex) {
                 // If we can't write to another client, let the other ChatSession deal with it
             }

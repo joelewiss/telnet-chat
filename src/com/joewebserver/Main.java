@@ -1,6 +1,7 @@
 package com.joewebserver;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.InetSocketAddress;
@@ -24,7 +25,8 @@ public class Main {
             for(int i = 0;;i++) {
                 client = server.accept();
                 System.out.println("Accepted new connection!");
-                System.out.println(String.format("Port: %s\tLocal port: %s\tIs connected: %s", client.getPort(), client.getLocalPort(), client.isConnected()));
+                InetSocketAddress ip = (InetSocketAddress) client.getRemoteSocketAddress();
+                System.out.println(String.format("Port: %s\tLocal port: %s\tRemote Addr: %s", client.getPort(), client.getLocalPort(), ip.getAddress()));
 
                 ChatSession chat = new ChatSession(client, users, i);
                 Thread chatThread = new Thread(chat);
